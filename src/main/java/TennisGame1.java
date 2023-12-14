@@ -14,41 +14,47 @@ public class TennisGame1 implements TennisGame {
             matchScoreP2 += 1;
     }
 
-    private String getScoresTied(String key) {
+    private String getScores(String matchScore) {
         HashMap<String, String> scores = new HashMap<>();
-
         scores.put("0-0", "Love-All");
         scores.put("1-1", "Fifteen-All");
         scores.put("2-2", "Thirty-All");
-        return scores.getOrDefault(key, "Deuce");
+        return scores.getOrDefault(matchScore, "Deuce");
     }
 
-    private String getScoresOdd(String score1, String score2) {
+    private String getScores(String matchScoreP1, String matchScoreP2) {
         HashMap<String, String> scores = new HashMap<>();
         scores.put("0", "Love");
         scores.put("1", "Fifteen");
         scores.put("2", "Thirty");
         scores.put("3", "Forty");
-        return String.format("%s-%s", scores.get(score1), scores.get(score2));
+        return String.format("%s-%s", scores.get(matchScoreP1), scores.get(matchScoreP2));
+    }
+
+    private String getScores(int matchScoreP1, int matchScoreP2) {
+
+        boolean isPLayerP1 = true;
+        int difference = 0;
+
+        if (matchScoreP1 > matchScoreP2) {
+            difference = matchScoreP1 - matchScoreP2;
+        } else {
+            difference = matchScoreP2 - matchScoreP1;
+            isPLayerP1 = false;
+        }
+
+        return String.format("%s%s", difference == 1 ? "Advantage player" : "Win for player", isPLayerP1 ? "1" : "2");
     }
 
     public String getScore() {
-        String runningScore = "";
-        int tempScore = 0;
         if (matchScoreP1 == matchScoreP2) {
             String matchScoreString = String.format("%d-%d", matchScoreP1, matchScoreP2);
-            runningScore = getScoresTied(matchScoreString);
-
-        } else if (matchScoreP1 >= 4 || matchScoreP2 >= 4) {
-            int minusResult = matchScoreP1 - matchScoreP2;
-            if (minusResult == 1) runningScore = "Advantage player1";
-            else if (minusResult == -1) runningScore = "Advantage player2";
-            else if (minusResult >= 2) runningScore = "Win for player1";
-            else runningScore = "Win for player2";
-        } else {
-            runningScore = getScoresOdd(String.valueOf(matchScoreP1), String.valueOf(matchScoreP2));
-
+            return getScores(matchScoreString);
         }
-        return runningScore;
+        if (matchScoreP1 < 4 && matchScoreP2 < 4) {
+            return getScores(String.valueOf(matchScoreP1), String.valueOf(matchScoreP2));
+        } else {
+            return getScores(matchScoreP1, matchScoreP2);
+        }
     }
 }
