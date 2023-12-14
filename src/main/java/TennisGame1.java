@@ -1,76 +1,60 @@
+import java.util.HashMap;
 
 public class TennisGame1 implements TennisGame {
-    
-    private int m_score1 = 0;
-    private int m_score2 = 0;
-    private String player1Name;
-    private String player2Name;
 
-    public TennisGame1(String player1Name, String player2Name) {
-        this.player1Name = player1Name;
-        this.player2Name = player2Name;
-    }
+    private int matchScoreP1 = 0;
+    private int matchScoreP2 = 0;
+
 
     public void wonPoint(String playerName) {
-        if (playerName == "player1")
-            m_score1 += 1;
+        String playerName1 = "player1";
+        if (playerName1.equalsIgnoreCase(playerName))
+            matchScoreP1 += 1;
         else
-            m_score2 += 1;
+            matchScoreP2 += 1;
+    }
+
+    private String getScores(String matchScore) {
+        HashMap<String, String> scores = new HashMap<>();
+        scores.put("0-0", "Love-All");
+        scores.put("1-1", "Fifteen-All");
+        scores.put("2-2", "Thirty-All");
+        return scores.getOrDefault(matchScore, "Deuce");
+    }
+
+    private String getScores(String matchScoreP1, String matchScoreP2) {
+        HashMap<String, String> scores = new HashMap<>();
+        scores.put("0", "Love");
+        scores.put("1", "Fifteen");
+        scores.put("2", "Thirty");
+        scores.put("3", "Forty");
+        return String.format("%s-%s", scores.get(matchScoreP1), scores.get(matchScoreP2));
+    }
+
+    private String getScores(int matchScoreP1, int matchScoreP2) {
+
+        boolean isPLayerP1 = true;
+        int difference = 0;
+
+        if (matchScoreP1 > matchScoreP2) {
+            difference = matchScoreP1 - matchScoreP2;
+        } else {
+            difference = matchScoreP2 - matchScoreP1;
+            isPLayerP1 = false;
+        }
+
+        return String.format("%s%s", difference == 1 ? "Advantage player" : "Win for player", isPLayerP1 ? "1" : "2");
     }
 
     public String getScore() {
-        String score = "";
-        int tempScore=0;
-        if (m_score1==m_score2)
-        {
-            switch (m_score1)
-            {
-                case 0:
-                        score = "Love-All";
-                    break;
-                case 1:
-                        score = "Fifteen-All";
-                    break;
-                case 2:
-                        score = "Thirty-All";
-                    break;
-                default:
-                        score = "Deuce";
-                    break;
-                
-            }
+        if (matchScoreP1 == matchScoreP2) {
+            String matchScoreString = String.format("%d-%d", matchScoreP1, matchScoreP2);
+            return getScores(matchScoreString);
         }
-        else if (m_score1>=4 || m_score2>=4)
-        {
-            int minusResult = m_score1-m_score2;
-            if (minusResult==1) score ="Advantage player1";
-            else if (minusResult ==-1) score ="Advantage player2";
-            else if (minusResult>=2) score = "Win for player1";
-            else score ="Win for player2";
+        if (matchScoreP1 < 4 && matchScoreP2 < 4) {
+            return getScores(String.valueOf(matchScoreP1), String.valueOf(matchScoreP2));
+        } else {
+            return getScores(matchScoreP1, matchScoreP2);
         }
-        else
-        {
-            for (int i=1; i<3; i++)
-            {
-                if (i==1) tempScore = m_score1;
-                else { score+="-"; tempScore = m_score2;}
-                switch(tempScore)
-                {
-                    case 0:
-                        score+="Love";
-                        break;
-                    case 1:
-                        score+="Fifteen";
-                        break;
-                    case 2:
-                        score+="Thirty";
-                        break;
-                    case 3:
-                        score+="Forty";
-                        break;
-                }
-            }
-        }
-        return score;
     }
 }
