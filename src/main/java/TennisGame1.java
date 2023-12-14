@@ -1,3 +1,4 @@
+import java.util.HashMap;
 
 public class TennisGame1 implements TennisGame {
 
@@ -13,54 +14,41 @@ public class TennisGame1 implements TennisGame {
             matchScoreP2 += 1;
     }
 
+    private String getScoresTied(String key) {
+        HashMap<String, String> scores = new HashMap<>();
+
+        scores.put("0-0", "Love-All");
+        scores.put("1-1", "Fifteen-All");
+        scores.put("2-2", "Thirty-All");
+        return scores.getOrDefault(key, "Deuce");
+    }
+
+    private String getScoresOdd(String score1, String score2) {
+        HashMap<String, String> scores = new HashMap<>();
+        scores.put("0", "Love");
+        scores.put("1", "Fifteen");
+        scores.put("2", "Thirty");
+        scores.put("3", "Forty");
+        return String.format("%s-%s", scores.get(score1), scores.get(score2));
+    }
+
     public String getScore() {
-        String score = "";
+        String runningScore = "";
         int tempScore = 0;
         if (matchScoreP1 == matchScoreP2) {
-            switch (matchScoreP1) {
-                case 0:
-                    score = "Love-All";
-                    break;
-                case 1:
-                    score = "Fifteen-All";
-                    break;
-                case 2:
-                    score = "Thirty-All";
-                    break;
-                default:
-                    score = "Deuce";
-                    break;
+            String matchScoreString = String.format("%d-%d", matchScoreP1, matchScoreP2);
+            runningScore = getScoresTied(matchScoreString);
 
-            }
         } else if (matchScoreP1 >= 4 || matchScoreP2 >= 4) {
             int minusResult = matchScoreP1 - matchScoreP2;
-            if (minusResult == 1) score = "Advantage player1";
-            else if (minusResult == -1) score = "Advantage player2";
-            else if (minusResult >= 2) score = "Win for player1";
-            else score = "Win for player2";
+            if (minusResult == 1) runningScore = "Advantage player1";
+            else if (minusResult == -1) runningScore = "Advantage player2";
+            else if (minusResult >= 2) runningScore = "Win for player1";
+            else runningScore = "Win for player2";
         } else {
-            for (int i = 1; i < 3; i++) {
-                if (i == 1) tempScore = matchScoreP1;
-                else {
-                    score += "-";
-                    tempScore = matchScoreP2;
-                }
-                switch (tempScore) {
-                    case 0:
-                        score += "Love";
-                        break;
-                    case 1:
-                        score += "Fifteen";
-                        break;
-                    case 2:
-                        score += "Thirty";
-                        break;
-                    case 3:
-                        score += "Forty";
-                        break;
-                }
-            }
+            runningScore = getScoresOdd(String.valueOf(matchScoreP1), String.valueOf(matchScoreP2));
+
         }
-        return score;
+        return runningScore;
     }
 }
